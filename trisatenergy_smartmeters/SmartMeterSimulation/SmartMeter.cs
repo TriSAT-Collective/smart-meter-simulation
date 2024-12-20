@@ -44,14 +44,6 @@ namespace SmartMeterSimulation
             double totalConsumption = 0;
             double totalProduction = 0;
             
-            foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
-            {
-                Console.WriteLine("######################################################################");
-                Console.WriteLine($"{entry.Key}: {entry.Value}");
-                Console.WriteLine("######################################################################");
-            }
-            
-            
             
             // Retrieve credentials from environment variables
             string username = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME");
