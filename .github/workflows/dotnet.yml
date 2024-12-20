@@ -85,9 +85,6 @@ jobs:
       - name: Generate lowercase registry URL
         run: |
           echo "IMAGE_URL=`echo ghcr.io/${{github.repository}} | tr '[:upper:]' '[:lower:]'`" >>${GITHUB_ENV}
-      - name: Print image URL
-        run: |
-          echo Generating image URL: ${{env.IMAGE_URL}}
       - name: Login to Docker Hub
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Fetch Docker Image Cache
@@ -95,7 +92,7 @@ jobs:
       - name: Build Docker Image and tag with version
         run: |
           docker build -t ${{env.IMAGE_URL}}:${{ github.event.release.tag_name }} \
-          --build-arg ARTIFACT_PATH=$${{env.APP_PUBLISH_OUTPUT_DIRECTORY}} \
+          --build-arg ARTIFACT_PATH=${{env.APP_PUBLISH_OUTPUT_DIRECTORY}} \
           -f ${{env.APP_SRC_DIRECTORY}}/Dockerfile .
       - name: Push Docker Image
         run: docker push ${{env.IMAGE_URL}}:${{ github.event.release.tag_name }}

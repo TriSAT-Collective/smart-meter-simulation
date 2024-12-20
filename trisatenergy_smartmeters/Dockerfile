@@ -14,5 +14,7 @@ LABEL org.opencontainers.image.description=$DESCRIPTION
 
 COPY $ARTIFACT_PATH /app
 
+RUN chmod +x $ENTRYPOINT
+
 ENTRYPOINT $ENTRYPOINT
 CMD []
