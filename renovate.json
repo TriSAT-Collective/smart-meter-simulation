@@ -10,7 +10,8 @@
         "patch",
         "minor"
       ],
-      "automerge": true
+      "automerge": true,
+      "autoApprove": true
     }
   ]
 }
