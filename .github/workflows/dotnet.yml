@@ -2,9 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: ["ci/actions"]
+    branches: ["*"]
   pull_request:
-    branches: ["main"]
+    branches: ["*"]
   release:
     types: [created]
 
