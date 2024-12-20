@@ -48,7 +48,7 @@ jobs:
         with:
           dotnet-version: 8.0.x
           cache: true
-          cache-dependency-path: "**/package-lock.json"
+          cache-dependency-path: "**/packages.lock.json"
       - name: cd into app directory
         run: cd $APP_SRC_DIRECTORY
       - name: Restore dependencies
