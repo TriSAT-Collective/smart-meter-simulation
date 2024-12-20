@@ -41,6 +41,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'created'
     environment: default
+    defaults:
+      run:
+        working-directory: $APP_SRC_DIRECTORY
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -49,8 +52,6 @@ jobs:
           dotnet-version: 8.0.x
           cache: true
           cache-dependency-path: "**/packages.lock.json"
-      - name: cd into app directory
-        run: cd $APP_SRC_DIRECTORY
       - name: Restore dependencies
         run: dotnet restore --locked-mode
       - name: dotnet publish
@@ -74,6 +75,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [release-artifact]
     environment: default
+    defaults:
+      run:
+        working-directory: $APP_SRC_DIRECTORY
     steps:
       - uses: actions/checkout@v4
       - name: Download artifacts
