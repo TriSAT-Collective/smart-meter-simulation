@@ -80,7 +80,7 @@ jobs:
           path: ${{env.APP_PUBLISH_OUTPUT_DIRECTORY}}
       - name: Generate lowercase registry URL
         run: |
-          echo IMAGE_URL=ghcr.io/${{github.repository}} | tr '[:upper:]' '[:lower:]' >> ${GITHUB_ENV}
+          echo "IMAGE_URL=`echo ghcr.io/${{github.repository}} | tr '[:upper:]' '[:lower:]'`" >>${GITHUB_ENV}
       - name: Print image URL
         run: |
           echo Generating image URL: ${{env.IMAGE_URL}}
