@@ -92,6 +92,7 @@ jobs:
       - name: Build Docker Image and tag with version
         run: |
           docker build -t ${{env.IMAGE_URL}}:${{ github.event.release.tag_name }} \
+          --cache-from ${{env.IMAGE_URL}}:latest \
           --build-arg ARTIFACT_PATH=${{env.APP_PUBLISH_OUTPUT_DIRECTORY}} \
           -f ${{env.APP_SRC_DIRECTORY}}/Dockerfile .
       - name: Push Docker Image
