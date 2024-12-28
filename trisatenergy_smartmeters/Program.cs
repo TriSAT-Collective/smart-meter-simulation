@@ -1,4 +1,4 @@
-﻿using DotNetEnv;
+﻿using System;
 
 namespace SmartMeterSimulation
 {
@@ -9,47 +9,22 @@ namespace SmartMeterSimulation
     {
         static async Task Main(string[] args)
         {
-            // Get the current directory (Program.cs location)
-            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            // Retrieve RabbitMQ credentials from environment variables
+            string rabbitMqUsername = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME");
+            string rabbitMqPassword = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD");
 
-            // Traverse upwards through the directories until we find the .env file
-            string envFilePath = TraverseForEnvFile(currentDirectory);
+            if (string.IsNullOrEmpty(rabbitMqUsername) || string.IsNullOrEmpty(rabbitMqPassword))
+            {
+                Console.WriteLine("RabbitMQ credentials are missing. Please check your environment variables.");
+                return; // Exit the application if credentials are not found
+            }
 
-            if (envFilePath != null)
-            {
-                Console.WriteLine("Found .env file at: " + envFilePath);
-                Env.Load(envFilePath); // Load the .env file
-            }
-            else
-            {
-                Console.WriteLine("No .env file found.");
-            }
+            Console.WriteLine($"Using RabbitMQ Username: {rabbitMqUsername}");
 
             // SimulateAsync 24 hours (1 day)
             int hours = 24;
             SmartMeter smartMeter = new SmartMeter(hours);
             await smartMeter.SimulateAsync(hours);
-        }
-        // Method to traverse up the directory tree to find the .env file
-        static string TraverseForEnvFile(string startingDirectory)
-        {
-            string directory = startingDirectory;
-
-            while (directory != null)
-            {
-                // Look for the .env file in the current directory
-                string envFilePath = Path.Combine(directory, ".env");
-                if (File.Exists(envFilePath))
-                {
-                    return envFilePath; // Return the path if found
-                }
-
-                // Move up one level in the directory hierarchy
-                directory = Directory.GetParent(directory)?.FullName;
-            }
-
-            // Return null if no .env file was found after traversing all directories
-            return null;
         }
     }
 }
