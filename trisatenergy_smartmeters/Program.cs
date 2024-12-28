@@ -16,7 +16,7 @@ namespace SmartMeterSimulation
             if (string.IsNullOrEmpty(rabbitMqUsername) || string.IsNullOrEmpty(rabbitMqPassword))
             {
                 Console.WriteLine("RabbitMQ credentials are missing. Please check your environment variables.");
-                return; // Exit the application if credentials are not found
+                return; //  Exit the application if credentials are not found
             }
 
             Console.WriteLine($"Using RabbitMQ Username: {rabbitMqUsername}");
