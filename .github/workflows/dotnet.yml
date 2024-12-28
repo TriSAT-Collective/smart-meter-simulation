@@ -78,6 +78,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Validate secrets (RABBITMQ_USERNAME and RABBITMQ_PASSWORD)
+      - name: Debug secrets (Validate RABBITMQ_USERNAME and RABBITMQ_PASSWORD)
+        run: |
+          echo "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}"
+          echo "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}"
+
       # Download artifacts
       - name: Download artifacts
         uses: actions/download-artifact@v4
