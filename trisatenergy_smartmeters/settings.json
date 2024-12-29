@@ -1,0 +1,18 @@
+{
+  "AppSettings": {
+    "RabbitMQ": {
+      "Uri": "amqp://localhost",
+      "VirtualHost": "/smartmetres",
+      "Username": "guest",
+      "Password": "guest"
+    },
+    "Misc": {
+      "MaintenanceMode": false
+    },
+    "EnergySources": {
+      "SolarEnergyProduction": 5.0,
+      "WindEnergyProduction": 7.5,
+      "OtherEnergyProduction": 2.5
+    }
+  }
+}

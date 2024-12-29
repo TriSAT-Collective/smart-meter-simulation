@@ -1,38 +1,39 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-using trisatenergy_smartmeters.SmartMeterSimulation.EnergySources;
-using SmartMeterSimulation.EnergySources;
-using RabbitMQ.Client;
 using System.Text;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
+using SmartMeterSimulation.EnergySources;
+using trisatenergy_smartmeters.SmartMeterSimulation.EnergySources;
 
-namespace SmartMeterSimulation
+namespace trisatenergy_smartmeters.SmartMeterSimulation
 {
     /// <summary>
     /// The SmartMeter class simulates household energy consumption and production from various sources.
     /// </summary>
     public class SmartMeter
     {
-        private readonly List<EnergySource> energySources = new List<EnergySource>();
-        private readonly double[] consumption;
-        private readonly bool isMaintenanceMode;
+
+        private readonly AppSettings _settings;
+        private readonly ILogger<SmartMeter> _logger;
+        private readonly List<EnergySource> _energySources = [];
+        private readonly double[] _consumption;
         private const string ExchangeName = "smartmetres_exchange";
-        private readonly Random rand = new Random();
+        private readonly Random _rand = new Random();
 
         /// <summary>
         /// Initializes a new instance of the SmartMeter class with the specified number of hours.
         /// </summary>
         /// <param name="hours">The number of hours to simulate (typically 24 for one day).</param>
-        public SmartMeter(int hours)
+        public SmartMeter(IOptions<AppSettings> settings, ILogger<SmartMeter> logger )
         {
-            consumption = new double[hours];
-            energySources.Add(new SolarEnergy());
-            energySources.Add(new WindEnergy());
-            energySources.Add(new OtherEnergy());
+            _settings = settings.Value;
+            _logger = logger;
+            
+            _energySources.Add(new SolarEnergy());
+            _energySources.Add(new WindEnergy());
+            _energySources.Add(new OtherEnergy());
             
             // Check the MAINTENANCE_MODE environment variable
-            isMaintenanceMode = Environment.GetEnvironmentVariable("MAINTENANCE_MODE") == "1";
         }
 
         /// <summary>
@@ -44,51 +45,47 @@ namespace SmartMeterSimulation
             double totalConsumption = 0;
             double totalProduction = 0;
             
-            
-            // Retrieve credentials from environment variables
-            string username = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME");
-            string password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD");
-
 
             // Setup RabbitMQ connection and channel
             var factory = new ConnectionFactory() {  
-                Uri = new Uri("amqp://localhost") // Use AMQP URI for messaging
-                , VirtualHost = "/smartmetres"   // Custom virtual host (optional)
-                , UserName = username
-                , Password = password
-            }; 
-            using var connection = await factory.CreateConnectionAsync();
-            using var channel = await connection.CreateChannelAsync();
-            // The exchange name
-            string exchangeName = "smartmetres_exchange";
+                Uri = _settings.RabbitMQ.Uri,
+                VirtualHost = _settings.RabbitMQ.VirtualHost,   
+                UserName = _settings.RabbitMQ.Username,
+                Password = _settings.RabbitMQ.Password
+            };
+
+            await using IConnection connection = await factory.CreateConnectionAsync();
+            await using IChannel channel = await connection.CreateChannelAsync();
+
+
+            var routingKey = _settings.Misc.MaintenanceMode ? "MAINTENANCE" : "OK";
             
-            for (int hour = 0; hour < hours; hour++)
+            for (var hour = 0; hour < hours; hour++)
             {
                 // SimulateAsync household energy consumption for this hour
-                consumption[hour] = SimulateConsumption(hour);
-                // Calculate total energy production from all sources
-                double hourlyProduction = SimulateTotalProduction(hour);
+                _consumption[hour] = SimulateConsumption(hour);
                 
-                totalConsumption += consumption[hour];
+                // Calculate total energy production from all sources
+                var hourlyProduction = SimulateTotalProduction(hour);
+                
+                totalConsumption += _consumption[hour];
                 totalProduction += hourlyProduction;
                 
                 // Prepare a message to publish
-                var message = $"Hour {hour}: Consumption: {consumption[hour]:0.00} kWh, Total Production: {hourlyProduction:0.00} kWh";
+                var message = $"Hour {hour}: Consumption: {_consumption[hour]:0.00} kWh, Total Production: {hourlyProduction:0.00} kWh";
         
                 // Optionally, append routing key (OK or MAINTENANCE) to the message body
-                string routingKey = isMaintenanceMode ? "MAINTENANCE" : "OK";
+
                 var body = Encoding.UTF8.GetBytes($"{message} | Maintenance Status: {routingKey}");
 
                 // Publish the message with the appropriate routing key
-                channel.BasicPublishAsync(exchangeName, routingKey, body: body);
+                await channel.BasicPublishAsync(ExchangeName, routingKey, body: body);
 
-                Console.WriteLine($"Sent message to {routingKey}: {message} | Maintenance Status: {routingKey}");
-
-               
+                _logger.LogInformation($"Sent message to {routingKey}: {message} | Maintenance Status: {routingKey}");
             }
 
-            Console.WriteLine($"\nTotal Consumption: {totalConsumption:0.00} kWh");
-            Console.WriteLine($"Total Production: {totalProduction:0.00} kWh");
+            _logger.LogInformation($"Total Consumption: {totalConsumption:0.00} kWh");
+            _logger.LogInformation($"Total Production: {totalProduction:0.00} kWh");
         }
 
         /// <summary>
@@ -101,7 +98,7 @@ namespace SmartMeterSimulation
             // Base consumption is higher in the morning and evening
             double baseConsumption = (hour >= 7 && hour <= 9) || (hour >= 18 && hour <= 21) ? 2.0 : 1.0;
             // Random fluctuation for realism
-            return baseConsumption + rand.NextDouble() * 0.5;
+            return baseConsumption + _rand.NextDouble() * 0.5;
         }
 
         /// <summary>
@@ -112,9 +109,9 @@ namespace SmartMeterSimulation
         private double SimulateTotalProduction(int hour)
         {
             double totalProduction = 0;
-            foreach (var source in energySources)
+            foreach (var source in _energySources)
             {
-                totalProduction += source.SimulateProduction(hour, rand);
+                totalProduction += source.SimulateProduction(hour, _rand);
             }
             return totalProduction;
         }
