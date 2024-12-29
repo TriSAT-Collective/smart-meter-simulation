@@ -12,7 +12,6 @@ namespace trisatenergy_smartmeters.SmartMeterSimulation;
 /// </summary>
 public class SmartMeter
 {
-    private const string ExchangeName = "smartmetres_exchange";
     private readonly List<EnergySource> _energySources = [];
     private readonly ILogger<SmartMeter> _logger;
     private readonly Random _rand = new();
@@ -30,10 +29,6 @@ public class SmartMeter
     {
         _settings = settings.Value;
         _logger = logger;
-
-        _energySources.Add(new SolarEnergy());
-        _energySources.Add(new WindEnergy());
-        _energySources.Add(new OtherEnergy());
     }
 
     /// <summary>
@@ -54,7 +49,12 @@ public class SmartMeter
         await using IConnection connection = await factory.CreateConnectionAsync();
         await using IChannel channel = await connection.CreateChannelAsync();
 
-        var routingKey = _settings.Misc.MaintenanceMode ? "MAINTENANCE" : "REGULAR";
+        var routingKeyBase = _settings.RabbitMQ.RoutingKeyBase;
+        var routingKeySuffix = _settings.Misc.MaintenanceMode ? "MAINTENANCE" : "REGULAR";
+        var routingKey = $"{routingKeyBase}.{routingKeySuffix}";
+
+        // round down to clean hour keep timezone suffix
+        startTime = new DateTime(startTime.Year, startTime.Month, startTime.Day, startTime.Hour, 0, 0, startTime.Kind);
 
         for (var hour = 0; hour < hours; hour++)
         {
@@ -88,11 +88,11 @@ public class SmartMeter
 
             // Publish the message with the appropriate routing key
             await channel.BasicPublishAsync(
-                ExchangeName,
+                _settings.RabbitMQ.ExchangeName,
                 routingKey,
                 Encoding.UTF8.GetBytes(json));
 
-            _logger.LogInformation($"Sent message to {routingKey}: {json}");
+            _logger.LogInformation($"Sent message to routingKey '{routingKey}': {json}");
 
             lifetimeProduction += totalProduction;
             lifetimeConsumption += consumption;
@@ -125,10 +125,12 @@ public class SmartMeter
     private Dictionary<EnergySourceType, double> SimulateProductionAllEnergySources(DateTime timeStamp)
     {
         var productionBySource = new Dictionary<EnergySourceType, double>();
-        foreach (EnergySource source in _energySources)
+
+        foreach (EnergySourceType type in _settings.EnergySources.EnabledSources)
         {
-            var production = source.SimulateProduction(timeStamp, _rand);
-            productionBySource[source.SourceType] = production;
+            EnergySource energySource = EnergySourceFactory.CreateEnergySource(type, _logger, _settings.EnergySources);
+            var production = energySource.SimulateProduction(timeStamp, _rand);
+            productionBySource[energySource.SourceType] = production;
         }
 
         return productionBySource;
