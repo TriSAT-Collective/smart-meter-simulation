@@ -8,9 +8,13 @@ namespace trisatenergy_smartmeters.SmartMeterSimulation.EnergySources
     /// </summary>
     public class SolarEnergy : EnergySource
     {
+        public EnergySourceType SourceType = EnergySourceType.Solar;
+        
         /// <inheritdoc />
-        public override double SimulateProduction(int hour, Random rand)
+        public override double SimulateProduction(DateTime timeStamp, Random rand)
         {
+            // Solar production is based on daylight hours
+            int hour = timeStamp.Hour;
             // Base solar production: more during daylight hours (6 AM - 6 PM)
             double baseProduction = (hour >= 6 && hour <= 18) ? 5.0 : 0.0;
             // Random fluctuation for realistic variability

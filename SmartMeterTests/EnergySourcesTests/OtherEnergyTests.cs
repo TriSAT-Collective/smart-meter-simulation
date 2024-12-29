@@ -1,6 +1,6 @@
 using System;
+using trisatenergy_smartmeters.SmartMeterSimulation.EnergySources;
 using Xunit;
-using SmartMeterSimulation.EnergySources;
 
 namespace SmartMeterTests.EnergySourceTests
 {
