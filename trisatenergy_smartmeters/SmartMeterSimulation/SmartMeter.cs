@@ -79,13 +79,6 @@ public class SmartMeter
 
             var json = JsonSerializer.Serialize(payload);
 
-            // var message =
-            //     $"Hour {hour}: Consumption: {_consumption[hour]:0.00} kWh, Total Production: {hourlyProduction:0.00} kWh";
-
-            // Optionally, append routing key (OK or MAINTENANCE) to the message body
-
-            // var body = Encoding.UTF8.GetBytes($"{message} | Maintenance Status: {routingKey}");
-
             // Publish the message with the appropriate routing key
             await channel.BasicPublishAsync(
                 _settings.RabbitMQ.ExchangeName,
