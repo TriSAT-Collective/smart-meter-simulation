@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using trisatenergy_smartmeters.SmartMeterSimulation;
 
-namespace SmartMeterSimulation
+namespace trisatenergy_smartmeters
 {
     /// <summary>
     /// Entry point of the application that runs the smart meter simulation.
@@ -9,22 +12,30 @@ namespace SmartMeterSimulation
     {
         static async Task Main(string[] args)
         {
-            // Retrieve RabbitMQ credentials from environment variables
-            string rabbitMqUsername = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME");
-            string rabbitMqPassword = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD");
+            IHost host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    config
+                        .SetBasePath(AppDomain.CurrentDomain
+                            .BaseDirectory) // Set the base path to the current directory
+                        .AddJsonFile("settings.json", optional: false, reloadOnChange: true)
+                        .AddEnvironmentVariables()
+                        .AddCommandLine(args);
 
-            if (string.IsNullOrEmpty(rabbitMqUsername) || string.IsNullOrEmpty(rabbitMqPassword))
-            {
-                Console.WriteLine("RabbitMQ credentials are missing. Please check your environment variables.");
-                return; // Exit the application if credentials are not found
-            }
-
-            Console.WriteLine($"Using RabbitMQ Username: {rabbitMqUsername}");
-
-            // SimulateAsync 24 hours (1 day)
-            int hours = 24;
-            SmartMeter smartMeter = new SmartMeter(hours);
-            await smartMeter.SimulateAsync(hours);
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    // Register AppSettings as a configuration instance
+                    services.Configure<AppSettings>(context.Configuration.GetSection(nameof(AppSettings)));
+                    // Add logging
+                    services.AddLogging();
+                    // Register the SmartMeter service
+                    services.AddTransient<SmartMeter>();                })
+                .Build();
+            
+            using IServiceScope scope = host.Services.CreateScope();
+            SmartMeter smartMeter = scope.ServiceProvider.GetRequiredService<SmartMeter>();
+            await smartMeter.SimulateAsync(24);
         }
     }
 }
