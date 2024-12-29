@@ -17,9 +17,10 @@ public class OtherEnergy : EnergySource
     /// <inheritdoc />
     public override double SimulateProduction(DateTime timeStamp, Random rand)
     {
+        Logger.LogTrace("Simulating other energy production for {TimeStamp}", timeStamp);
         var baseProduction = 1.0;
         var hour = timeStamp.Hour;
         var fluctuation = rand.NextDouble() * 0.2;
-        return baseProduction + fluctuation;
+        return Math.Round(baseProduction + fluctuation, Settings.ResultDecimalPlaces);
     }
 }

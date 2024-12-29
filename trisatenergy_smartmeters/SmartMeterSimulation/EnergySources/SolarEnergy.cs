@@ -24,6 +24,6 @@ public class SolarEnergy : EnergySource
         var baseProduction = hour >= 6 && hour <= 18 ? 5.0 : 0.0;
         // Random fluctuation for realistic variability
         var fluctuation = rand.NextDouble() * 1.0;
-        return baseProduction + fluctuation;
+        return Math.Round(baseProduction + fluctuation, Settings.ResultDecimalPlaces);
     }
 }
