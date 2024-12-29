@@ -78,12 +78,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Validate secrets (RABBITMQ_USERNAME and RABBITMQ_PASSWORD)
-      - name: Debug secrets (Validate RABBITMQ_USERNAME and RABBITMQ_PASSWORD)
-        run: |
-          echo "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}"
-          echo "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}"
-
       # Download artifacts
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -110,8 +104,6 @@ jobs:
           docker build -t ${{env.IMAGE_URL}}:${{ github.event.release.tag_name }} \
             --cache-from ${{env.IMAGE_URL}}:latest \
             --build-arg ARTIFACT_PATH=${{env.APP_PUBLISH_OUTPUT_DIRECTORY}} \
-            --build-arg RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }} \
-            --build-arg RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }} \
             -f ${{env.APP_SRC_DIRECTORY}}/Dockerfile .
 
       # Push Docker Image
