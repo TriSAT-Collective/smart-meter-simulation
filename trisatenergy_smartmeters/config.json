@@ -2,7 +2,7 @@
   "AppSettings": {
     "RabbitMQ": {
       "Uri": "amqp://localhost",
-      "VirtualHost": "/smartmetres",
+      "VirtualHost": "/smartmeters",
       "Username": "guest",
       "Password": "guest"
     },

@@ -11,9 +11,19 @@ namespace trisatenergy_smartmeters.SmartMeterSimulation.EnergySources
         /// <summary>
         /// Simulates the production of energy for a given hour.
         /// </summary>
-        /// <param name="hour">The hour of the day (0-23).</param>
+        /// <param name="timeStamp">THe timestamp</param>
         /// <param name="rand">A Random object for generating fluctuations.</param>
         /// <returns>Amount of energy produced in kWh.</returns>
-        public abstract double SimulateProduction(int hour, Random rand);
+        public abstract double SimulateProduction(DateTime timeStamp, Random rand);
+        
+        
+        public EnergySourceType SourceType { get;}
+    }
+    
+    public enum EnergySourceType
+    {
+        Solar,
+        Wind,
+        Other
     }
 }

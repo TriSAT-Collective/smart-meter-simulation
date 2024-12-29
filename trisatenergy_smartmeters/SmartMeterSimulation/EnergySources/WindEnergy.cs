@@ -8,10 +8,12 @@ namespace trisatenergy_smartmeters.SmartMeterSimulation.EnergySources
     /// </summary>
     public class WindEnergy : EnergySource
     {
+        public EnergySourceType SourceType = EnergySourceType.Wind;
+        
         /// <inheritdoc />
-        public override double SimulateProduction(int hour, Random rand)
+        public override double SimulateProduction(DateTime timeStamp, Random rand)
         {
-            // Wind is more unpredictable but typically fluctuates throughout the day
+            var hour = timeStamp.Hour;
             return rand.NextDouble() * 3.0;
         }
     }

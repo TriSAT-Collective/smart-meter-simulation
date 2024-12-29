@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using trisatenergy_smartmeters.SmartMeterSimulation.EnergySources;
-
-
-namespace SmartMeterSimulation.EnergySources
+namespace trisatenergy_smartmeters.SmartMeterSimulation.EnergySources
 {
     /// <summary>
     /// Simulates small production from various other sources like geothermal or battery.
@@ -11,10 +6,12 @@ namespace SmartMeterSimulation.EnergySources
     /// </summary>
     public class OtherEnergy : EnergySource
     {
+        public EnergySourceType SourceType = EnergySourceType.Other;
+        
         /// <inheritdoc />
-        public override double SimulateProduction(int hour, Random rand)
+        public override double SimulateProduction(DateTime timeStamp, Random rand)
         {
-            // Constant base production with small fluctuations
+            int hour = timeStamp.Hour;
             double baseProduction = 1.0;
             double fluctuation = rand.NextDouble() * 0.2;
             return baseProduction + fluctuation;

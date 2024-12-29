@@ -74,7 +74,7 @@ namespace SmartMeterTests
         public async void Simulate_24Hours_SimulatesWithoutError()
         {
             // Act & Assert
-            await _smartMeter.SimulateAsync(24);
+            await _smartMeter.SimulateAndPublish(24);
         }
     }
 }
