@@ -2,17 +2,29 @@
   "AppSettings": {
     "RabbitMQ": {
       "Uri": "amqp://localhost",
-      "VirtualHost": "/smartmeters",
+      "VirtualHost": "/vcs",
       "Username": "guest",
-      "Password": "guest"
+      "Password": "guest",
+      "ExchangeName": "smartmeter-exchange",
+      "RoutingKeyBase": "smartmeter"
     },
     "Misc": {
       "MaintenanceMode": false
     },
     "EnergySources": {
+      "EnabledSources": [
+        "Solar",
+        "Wind",
+        "Other"
+      ],
       "SolarEnergyProduction": 5.0,
       "WindEnergyProduction": 7.5,
       "OtherEnergyProduction": 2.5
+    },
+    "Logging": {
+      "LogLevel": {
+        "Default": "Information"
+      }
     }
   }
 }

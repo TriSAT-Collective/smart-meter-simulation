@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using trisatenergy_smartmeters.SmartMeterSimulation;
 
 namespace trisatenergy_smartmeters;
@@ -27,7 +28,11 @@ internal class Program
                 // Register AppSettings as a configuration instance
                 services.Configure<AppSettings>(context.Configuration.GetSection(nameof(AppSettings)));
                 // Add logging
-                services.AddLogging();
+                services.AddLogging(builder =>
+                {
+                    builder.AddConfiguration(context.Configuration.GetSection("AppSettings:Logging"));
+                    builder.AddConsole();
+                });
                 // Register the SmartMeter service
                 services.AddTransient<SmartMeter>();
             })

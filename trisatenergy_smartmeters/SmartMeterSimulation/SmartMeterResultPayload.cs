@@ -8,6 +8,5 @@ public class SmartMeterResultPayload
     public double TotalProduction { get; set; }
     public Dictionary<EnergySourceType, double> ProductionBySource { get; set; }
     public double TotalConsumption { get; set; }
-    public Dictionary<EnergySourceType, double> ConsumptionBySource { get; set; }
     public bool MaintenanceMode { get; set; }
 }
