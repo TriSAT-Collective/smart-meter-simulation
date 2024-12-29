@@ -29,5 +29,6 @@ public class AppSettings
         public double SolarEnergyProduction { get; set; }
         public double WindEnergyProduction { get; set; }
         public double OtherEnergyProduction { get; set; }
+        public int ResultDecimalPlaces { get; set; }
     }
 }

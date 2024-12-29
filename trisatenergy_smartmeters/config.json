@@ -19,11 +19,12 @@
       ],
       "SolarEnergyProduction": 5.0,
       "WindEnergyProduction": 7.5,
-      "OtherEnergyProduction": 2.5
+      "OtherEnergyProduction": 2.5,
+      "ResultDecimalPlaces": 4
     },
     "Logging": {
       "LogLevel": {
-        "Default": "Information"
+        "Default": "Trace"
       }
     }
   }

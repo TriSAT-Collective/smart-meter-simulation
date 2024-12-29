@@ -19,6 +19,6 @@ public class WindEnergy : EnergySource
     {
         Logger.LogTrace("Simulating wind energy production for {TimeStamp}", timeStamp);
         var hour = timeStamp.Hour;
-        return rand.NextDouble() * 3.0;
+        return Math.Round(rand.NextDouble() * 3.0, Settings.ResultDecimalPlaces);
     }
 }
