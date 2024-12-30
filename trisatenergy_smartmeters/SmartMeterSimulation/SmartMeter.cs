@@ -61,7 +61,7 @@ public class SmartMeter
         {
             await OnceOffSimulation(startTime, 1);
             await Task.Delay(_settings.Misc.ContinuousSimulationIntervalMs);
-            startTime.AddHours(1);
+            startTime = startTime.AddHours(1);
         }
     }
 
