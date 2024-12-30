@@ -9,7 +9,10 @@
       "RoutingKeyBase": "smartmeter"
     },
     "Misc": {
-      "MaintenanceMode": false
+      "MaintenanceMode": false,
+      "ContinuousSimulation": true,
+      "ContinuousSimulationIntervalMs": 3000,
+      "OnceOffSimulationHours": 24
     },
     "EnergySources": {
       "EnabledSources": [
@@ -24,7 +27,7 @@
     },
     "Logging": {
       "LogLevel": {
-        "Default": "Trace"
+        "Default": "Information"
       }
     }
   }

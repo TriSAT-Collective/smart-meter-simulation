@@ -31,11 +31,46 @@ public class SmartMeter
         _logger = logger;
     }
 
+    public async Task Stop()
+    {
+        _logger.LogInformation("SmartMeter application stopped.");
+        _logger.LogInformation($"Total Consumption: {lifetimeConsumption:0.00} kWh");
+        _logger.LogInformation($"Total Production: {lifetimeProduction:0.00} kWh");
+    }
+
+    public async Task Start()
+    {
+        DateTime startTime = _settings.Misc.SimulationStartTime ?? DateTime.Now;
+        if (_settings.Misc.ContinuousSimulation)
+        {
+            _logger.LogInformation("Starting continuous simulation...");
+            await ContinuousSimulation(startTime);
+        }
+        else
+        {
+            _logger.LogInformation("Starting once-off simulation... Simulating {Hours} hours",
+                _settings.Misc.OnceOffSimulationHours);
+            await OnceOffSimulation(startTime, _settings.Misc.OnceOffSimulationHours);
+        }
+    }
+
+    private async Task ContinuousSimulation(DateTime startTime)
+    {
+        startTime = new DateTime(startTime.Year, startTime.Month, startTime.Day, startTime.Hour, 0, 0, startTime.Kind);
+        while (true)
+        {
+            await OnceOffSimulation(startTime, 1);
+            await Task.Delay(_settings.Misc.ContinuousSimulationIntervalMs);
+            startTime.AddHours(1);
+        }
+    }
+
+
     /// <summary>
     ///     Simulates energy consumption and production for the specified number of hours.
     /// </summary>
     /// <param name="hours">Number of hours to simulate.</param>
-    public async Task SimulateAndPublish(DateTime startTime, int hours)
+    private async Task OnceOffSimulation(DateTime startTime, int hours)
     {
         // Setup RabbitMQ connection and channel
         var factory = new ConnectionFactory
@@ -90,9 +125,6 @@ public class SmartMeter
             lifetimeProduction += totalProduction;
             lifetimeConsumption += consumption;
         }
-
-        _logger.LogInformation($"Total Consumption: {lifetimeConsumption:0.00} kWh");
-        _logger.LogInformation($"Total Production: {lifetimeProduction:0.00} kWh");
     }
 
     /// <summary>

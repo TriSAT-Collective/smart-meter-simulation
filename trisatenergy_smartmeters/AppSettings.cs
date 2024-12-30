@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using trisatenergy_smartmeters.SmartMeterSimulation.EnergySources;
 
 namespace trisatenergy_smartmeters;
@@ -21,6 +22,13 @@ public class AppSettings
     public class MiscSettings
     {
         public bool MaintenanceMode { get; set; }
+        public bool ContinuousSimulation { get; set; }
+
+        [DefaultValue(3000)] public int ContinuousSimulationIntervalMs { get; set; }
+
+        [DefaultValue(24)] public int OnceOffSimulationHours { get; set; }
+
+        public DateTime? SimulationStartTime { get; set; }
     }
 
     public class EnergySourcesSettings
