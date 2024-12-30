@@ -65,7 +65,7 @@ public class SmartMeter
             var totalProduction = productionBySource.Values.Sum();
 
             // Simulate household energy consumption for this hour
-            var consumption = SimulateConsumption(timeStamp);
+            var consumption = Math.Round(SimulateConsumption(timeStamp), _settings.EnergySources.ResultDecimalPlaces);
 
             // Prepare a message to publish
             var payload = new SmartMeterResultPayload
