@@ -14,6 +14,8 @@ public class SmartMeter
 {
     private readonly List<EnergySource> _energySources = [];
     private readonly ILogger<SmartMeter> _logger;
+    private IChannel _rabbitMQChannel;
+    private IConnection _rabbitMQConnection;
     private readonly Random _rand = new();
 
     private readonly AppSettings _settings;
@@ -40,6 +42,17 @@ public class SmartMeter
 
     public async Task Start()
     {
+        var factory = new ConnectionFactory
+        {
+            Uri = _settings.RabbitMQ.Uri,
+            VirtualHost = _settings.RabbitMQ.VirtualHost,
+            UserName = _settings.RabbitMQ.Username,
+            Password = _settings.RabbitMQ.Password
+        };
+
+        _rabbitMQConnection = await factory.CreateConnectionAsync();
+         _rabbitMQChannel = await _rabbitMQConnection.CreateChannelAsync();
+
         DateTime startTime = _settings.Misc.SimulationStartTime ?? DateTime.Now;
         if (_settings.Misc.ContinuousSimulation)
         {
@@ -72,18 +85,6 @@ public class SmartMeter
     /// <param name="hours">Number of hours to simulate.</param>
     private async Task OnceOffSimulation(DateTime startTime, int hours)
     {
-        // Setup RabbitMQ connection and channel
-        var factory = new ConnectionFactory
-        {
-            Uri = _settings.RabbitMQ.Uri,
-            VirtualHost = _settings.RabbitMQ.VirtualHost,
-            UserName = _settings.RabbitMQ.Username,
-            Password = _settings.RabbitMQ.Password
-        };
-
-        await using IConnection connection = await factory.CreateConnectionAsync();
-        await using IChannel channel = await connection.CreateChannelAsync();
-
         var routingKeyBase = _settings.RabbitMQ.RoutingKeyBase;
         var routingKeySuffix = _settings.Misc.MaintenanceMode ? "MAINTENANCE" : "REGULAR";
         var routingKey = $"{routingKeyBase}.{routingKeySuffix}";
@@ -115,7 +116,7 @@ public class SmartMeter
             var json = JsonSerializer.Serialize(payload);
 
             // Publish the message with the appropriate routing key
-            await channel.BasicPublishAsync(
+            await _rabbitMQChannel.BasicPublishAsync(
                 _settings.RabbitMQ.ExchangeName,
                 routingKey,
                 Encoding.UTF8.GetBytes(json));
