@@ -51,6 +51,6 @@ internal class Program
         await Task.WhenAny(smartMeterTask, Task.Delay(Timeout.Infinite, cancellationTokenSource.Token));
 
         // Perform cleanup tasks
-        smartMeter.Stop();
+        await smartMeter.Stop();
     }
 }

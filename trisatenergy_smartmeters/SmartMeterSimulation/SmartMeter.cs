@@ -51,7 +51,7 @@ public class SmartMeter
         };
 
         _rabbitMqConnection = await factory.CreateConnectionAsync();
-         _rabbitMqChannel = await _rabbitMqConnection.CreateChannelAsync();
+        _rabbitMqChannel = await _rabbitMqConnection.CreateChannelAsync();
 
         DateTime startTime = _settings.Misc.SimulationStartTime ?? DateTime.Now;
         if (_settings.Misc.ContinuousSimulation)
