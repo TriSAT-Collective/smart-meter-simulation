@@ -14,14 +14,14 @@ public class SmartMeter
 {
     private readonly List<EnergySource> _energySources = [];
     private readonly ILogger<SmartMeter> _logger;
-    private IChannel _rabbitMQChannel;
-    private IConnection _rabbitMQConnection;
+    private IChannel _rabbitMqChannel;
+    private IConnection _rabbitMqConnection;
     private readonly Random _rand = new();
 
     private readonly AppSettings _settings;
 
-    private double lifetimeConsumption;
-    private double lifetimeProduction;
+    private double _lifetimeConsumption;
+    private double _lifetimeProduction;
 
     /// <summary>
     ///     Initializes a new instance of the SmartMeter class with the specified number of hours.
@@ -36,22 +36,22 @@ public class SmartMeter
     public async Task Stop()
     {
         _logger.LogInformation("SmartMeter application stopped.");
-        _logger.LogInformation($"Total Consumption: {lifetimeConsumption:0.00} kWh");
-        _logger.LogInformation($"Total Production: {lifetimeProduction:0.00} kWh");
+        _logger.LogInformation($"Total Consumption: {_lifetimeConsumption:0.00} kWh");
+        _logger.LogInformation($"Total Production: {_lifetimeProduction:0.00} kWh");
     }
 
     public async Task Start()
     {
         var factory = new ConnectionFactory
         {
-            Uri = _settings.RabbitMQ.Uri,
-            VirtualHost = _settings.RabbitMQ.VirtualHost,
-            UserName = _settings.RabbitMQ.Username,
-            Password = _settings.RabbitMQ.Password
+            Uri = _settings.RabbitMq.Uri,
+            VirtualHost = _settings.RabbitMq.VirtualHost,
+            UserName = _settings.RabbitMq.Username,
+            Password = _settings.RabbitMq.Password
         };
 
-        _rabbitMQConnection = await factory.CreateConnectionAsync();
-         _rabbitMQChannel = await _rabbitMQConnection.CreateChannelAsync();
+        _rabbitMqConnection = await factory.CreateConnectionAsync();
+         _rabbitMqChannel = await _rabbitMqConnection.CreateChannelAsync();
 
         DateTime startTime = _settings.Misc.SimulationStartTime ?? DateTime.Now;
         if (_settings.Misc.ContinuousSimulation)
@@ -85,7 +85,7 @@ public class SmartMeter
     /// <param name="hours">Number of hours to simulate.</param>
     private async Task OnceOffSimulation(DateTime startTime, int hours)
     {
-        var routingKeyBase = _settings.RabbitMQ.RoutingKeyBase;
+        var routingKeyBase = _settings.RabbitMq.RoutingKeyBase;
         var routingKeySuffix = _settings.Misc.MaintenanceMode ? "MAINTENANCE" : "REGULAR";
         var routingKey = $"{routingKeyBase}.{routingKeySuffix}";
 
@@ -116,15 +116,15 @@ public class SmartMeter
             var json = JsonSerializer.Serialize(payload);
 
             // Publish the message with the appropriate routing key
-            await _rabbitMQChannel.BasicPublishAsync(
-                _settings.RabbitMQ.ExchangeName,
+            await _rabbitMqChannel.BasicPublishAsync(
+                _settings.RabbitMq.ExchangeName,
                 routingKey,
                 Encoding.UTF8.GetBytes(json));
 
             _logger.LogInformation($"Sent message to routingKey '{routingKey}': {json}");
 
-            lifetimeProduction += totalProduction;
-            lifetimeConsumption += consumption;
+            _lifetimeProduction += totalProduction;
+            _lifetimeConsumption += consumption;
         }
     }
 
