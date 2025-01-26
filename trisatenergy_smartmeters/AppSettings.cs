@@ -21,7 +21,7 @@ public class AppSettings
 
     public class MiscSettings
     {
-        public Guid SmartMeterId { get; set; }
+        public Guid SmartMeterId { get; set; } = Guid.NewGuid();
         public bool MaintenanceMode { get; set; }
         public bool ContinuousSimulation { get; set; }
 
