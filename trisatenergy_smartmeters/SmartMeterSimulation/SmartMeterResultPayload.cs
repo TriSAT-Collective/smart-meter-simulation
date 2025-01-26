@@ -9,7 +9,7 @@ public class SmartMeterResultPayload
     /// <summary>
     /// Gets or sets the unique identifier of the smart meter.
     /// </summary>
-    public Guid SmartMeterId { get; set; }
+    public Guid Id { get; set; }
 
 
     public DateTime Timestamp { get; set; }
