@@ -106,7 +106,7 @@ public class SmartMeter
             // Prepare a message to publish
             var payload = new SmartMeterResultPayload
             {
-                SmartMeterId = _settings.Misc.SmartMeterId,
+                Id = _settings.Misc.SmartMeterId,
                 Timestamp = timeStamp,
                 TotalConsumption = consumption,
                 TotalProduction = productionBySource.Values.Sum(),
