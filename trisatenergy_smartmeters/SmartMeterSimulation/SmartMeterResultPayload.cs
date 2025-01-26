@@ -4,6 +4,7 @@ namespace trisatenergy_smartmeters.SmartMeterSimulation;
 
 public class SmartMeterResultPayload
 {
+    public Guid SmartMeterId { get; set; }
     public DateTime Timestamp { get; set; }
     public double TotalProduction { get; set; }
     public Dictionary<EnergySourceType, double> ProductionBySource { get; set; }
