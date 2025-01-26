@@ -54,17 +54,11 @@ public class AppSettings
     /// </summary>
     public class MiscSettings
     {
-<<<<<<< HEAD
         /// <summary>
         /// Gets or sets the unique identifier for the smart meter.
         /// </summary>
         public Guid SmartMeterId { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether the maintenance mode is enabled.
-        /// </summary>
-=======
-        public Guid SmartMeterId { get; set; } = Guid.NewGuid();
->>>>>>> f872b13a524e4089330b494258d17b1b6ac08da9
+
         public bool MaintenanceMode { get; set; }
         /// <summary>
         /// Gets or sets a value indicating whether the simulation runs continuously.

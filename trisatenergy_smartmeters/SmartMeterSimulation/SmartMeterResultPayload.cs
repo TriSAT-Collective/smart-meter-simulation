@@ -6,17 +6,12 @@ namespace trisatenergy_smartmeters.SmartMeterSimulation;
 /// </summary>
 public class SmartMeterResultPayload
 {
-<<<<<<< HEAD
     /// <summary>
     /// Gets or sets the unique identifier of the smart meter.
     /// </summary>
     public Guid SmartMeterId { get; set; }
-    /// <summary>
-    /// Gets or sets the timestamp of the result.
-    /// </summary>
-=======
-    public Guid Id { get; set; }
->>>>>>> f872b13a524e4089330b494258d17b1b6ac08da9
+
+
     public DateTime Timestamp { get; set; }
     /// <summary>
     /// Gets or sets the total energy production.
