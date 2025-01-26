@@ -11,6 +11,10 @@ namespace trisatenergy_smartmeters;
 /// </summary>
 internal class Program
 {
+    /// <summary>
+    /// Main method that sets up and runs the smart meter simulation.
+    /// </summary>
+    /// <param name="args">Command-line arguments.</param>
     private static async Task Main(string[] args)
     {
         var cancellationTokenSource = new CancellationTokenSource();

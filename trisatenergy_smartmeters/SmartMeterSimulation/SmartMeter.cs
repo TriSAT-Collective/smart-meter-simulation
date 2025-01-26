@@ -8,7 +8,7 @@ using trisatenergy_smartmeters.SmartMeterSimulation.EnergySources;
 namespace trisatenergy_smartmeters.SmartMeterSimulation;
 
 /// <summary>
-///     The SmartMeter class simulates household energy consumption and production from various sources.
+/// The SmartMeter class simulates household energy consumption and production from various sources.
 /// </summary>
 public class SmartMeter
 {
@@ -24,22 +24,27 @@ public class SmartMeter
     private double _lifetimeProduction;
 
     /// <summary>
-    ///     Initializes a new instance of the SmartMeter class with the specified number of hours.
+    /// Initializes a new instance of the SmartMeter class with the specified settings and logger.
     /// </summary>
-    /// <param name="hours">The number of hours to simulate (typically 24 for one day).</param>
+    /// <param name="settings">The application settings.</param>
+    /// <param name="logger">The logger instance.</param>
     public SmartMeter(IOptions<AppSettings> settings, ILogger<SmartMeter> logger)
     {
         _settings = settings.Value;
         _logger = logger;
     }
-
+    /// <summary>
+    /// Stops the smart meter simulation and logs the total consumption and production.
+    /// </summary>
     public async Task Stop()
     {
         _logger.LogInformation("SmartMeter application stopped.");
         _logger.LogInformation($"Total Consumption: {_lifetimeConsumption:0.00} kWh");
         _logger.LogInformation($"Total Production: {_lifetimeProduction:0.00} kWh");
     }
-
+    /// <summary>
+    /// Starts the smart meter simulation.
+    /// </summary>
     public async Task Start()
     {
         var factory = new ConnectionFactory
@@ -66,7 +71,10 @@ public class SmartMeter
             await OnceOffSimulation(startTime, _settings.Misc.OnceOffSimulationHours);
         }
     }
-
+    /// <summary>
+    /// Runs the continuous simulation.
+    /// </summary>
+    /// <param name="startTime">The start time of the simulation.</param>
     private async Task ContinuousSimulation(DateTime startTime)
     {
         startTime = new DateTime(startTime.Year, startTime.Month, startTime.Day, startTime.Hour, 0, 0, startTime.Kind);
@@ -80,9 +88,10 @@ public class SmartMeter
 
 
     /// <summary>
-    ///     Simulates energy consumption and production for the specified number of hours.
+    /// Simulates energy consumption and production for the specified number of hours.
     /// </summary>
-    /// <param name="hours">Number of hours to simulate.</param>
+    /// <param name="startTime">The start time of the simulation.</param>
+    /// <param name="hours">The number of hours to simulate.</param>
     private async Task OnceOffSimulation(DateTime startTime, int hours)
     {
         var routingKeyBase = _settings.RabbitMq.RoutingKeyBase;
@@ -130,9 +139,9 @@ public class SmartMeter
     }
 
     /// <summary>
-    ///     Simulates household energy consumption for a given timestamp.
+    /// Simulates household energy consumption for a given timestamp.
     /// </summary>
-    /// <param name="timeStamp">the timestamp for which to simulate energy production</param>
+    /// <param name="timeStamp">The timestamp for which to simulate energy consumption.</param>
     /// <returns>Total energy consumed in kWh.</returns>
     private double SimulateConsumption(DateTime timeStamp)
     {
@@ -145,10 +154,10 @@ public class SmartMeter
 
 
     /// <summary>
-    ///     Aggregates the energy production from all energy sources for a given hour.
+    /// Aggregates the energy production from all energy sources for a given hour.
     /// </summary>
-    /// <param name="timeStamp">the timestamp for which to simulate energy production</param>
-    /// <returns>Total energy produced in kWh.</returns>
+    /// <param name="timeStamp">The timestamp for which to simulate energy production.</param>
+    /// <returns>A dictionary containing the energy production by source.</returns>
     private Dictionary<EnergySourceType, double> SimulateProductionAllEnergySources(DateTime timeStamp)
     {
         var productionBySource = new Dictionary<EnergySourceType, double>();

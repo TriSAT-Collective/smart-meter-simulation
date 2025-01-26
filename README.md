@@ -14,38 +14,66 @@
 
 ## About
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec nunc vulputate tincidunt.
+The `smart-meter-simulation` project simulates energy production from various sources such as wind, solar, and other renewable sources. It is designed to help in understanding and analyzing the behavior of different energy sources in a smart meter environment.
 
 ## Features
 
-> Describe the features
+- Simulates energy production from wind, solar, and other sources.
+- Provides realistic variability in energy production.
+- Configurable settings for different energy sources.
+- Logging support for detailed simulation analysis.
 
 ## Dependencies
 
-> If there are any third-party dependencies, they should be listed here.
+- .NET 6.0 or later
+- Microsoft.Extensions.Logging
+- Moq (for unit testing)
 
 ## Building
 
-> Describe how to build the project.
+To build the project, use the following command:
+
+```bash
+dotnet build
+```
 
 ## Installation
 
-> Describe how to install the project.
+To install the project, clone the repository and navigate to the project directory:
+```bash
+git clone https://github.com/yourusername/smart-meter-simulation.git
+cd smart-meter-simulation
+```
 
 ## Usage
 
-> Describe how to use the project.
+To run the simulation, use the following command:
+```bash
+dotnet run
+```
 
 ## Configuration
 
-> Describe how to configure the project.
-
-```toml
-[general]
-log_level = "info"
-show_banner = true
+The project can be configured using the appsettings.json file. Below is an example configuration:
+```JSON
+{
+  "EnergySourcesSettings": {
+    "WindEnergyProduction": 7.5,
+    "SolarEnergyProduction": 5.0,
+    "OtherEnergyProduction": 3.0,
+    "ResultDecimalPlaces": 2
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    }
+  }
+}
 ```
+
 
 ## Shoutout
 
-> Give a shoutout to any libraries or projects that inspired this one.
+Special thanks to the following libraries and projects that inspired this one:
+- Microsoft.Extensions.Logging
+- Moq

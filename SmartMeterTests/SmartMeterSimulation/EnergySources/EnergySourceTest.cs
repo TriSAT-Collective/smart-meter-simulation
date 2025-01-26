@@ -4,13 +4,17 @@ using trisatenergy_smartmeters;
 using trisatenergy_smartmeters.SmartMeterSimulation.EnergySources;
 
 namespace SmartMeterTests.SmartMeterSimulation.EnergySources;
-
+/// <summary>
+/// Unit tests for the energy sources in the smart meter simulation.
+/// </summary>
 public class EnergySourceTest
 {
     private readonly OtherEnergy _otherEnergy;
     private readonly SolarEnergy _solarEnergy;
     private readonly WindEnergy _windEnergy;
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnergySourceTest"/> class.
+    /// </summary>
     public EnergySourceTest()
     {
         Mock<ILogger<WindEnergy>> mockWindLogger = new();
@@ -26,7 +30,9 @@ public class EnergySourceTest
         _solarEnergy = new SolarEnergy(mockSolarLogger.Object, settings);
         _otherEnergy = new OtherEnergy(mockOtherLogger.Object, settings);
     }
-
+    /// <summary>
+    /// Tests that the wind energy production simulation returns a non-negative value.
+    /// </summary>
     [Fact]
     public void WindEnergy_SimulateProduction_ReturnsPositiveValue()
     {
@@ -40,7 +46,9 @@ public class EnergySourceTest
         // Assert
         Assert.True(production >= 0, "Wind energy production should be non-negative.");
     }
-
+    /// <summary>
+    /// Tests that the solar energy production simulation returns a non-negative value.
+    /// </summary>
     [Fact]
     public void SolarEnergy_SimulateProduction_ReturnsPositiveValue()
     {
@@ -54,7 +62,9 @@ public class EnergySourceTest
         // Assert
         Assert.True(production >= 0, "Solar energy production should be non-negative.");
     }
-
+    /// <summary>
+    /// Tests that the other energy production simulation returns a non-negative value.
+    /// </summary>
     [Fact]
     public void OtherEnergy_SimulateProduction_ReturnsPositiveValue()
     {
