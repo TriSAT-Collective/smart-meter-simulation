@@ -7,9 +7,6 @@ namespace SmartMeterTests.SmartMeterSimulation.EnergySources;
 
 public class EnergySourceTest
 {
-    private readonly Mock<ILogger<OtherEnergy>> _mockOtherLogger;
-    private readonly Mock<ILogger<SolarEnergy>> _mockSolarLogger;
-    private readonly Mock<ILogger<WindEnergy>> _mockWindLogger;
     private readonly OtherEnergy _otherEnergy;
     private readonly AppSettings.EnergySourcesSettings _settings;
     private readonly SolarEnergy _solarEnergy;
@@ -17,18 +14,18 @@ public class EnergySourceTest
 
     public EnergySourceTest()
     {
-        _mockWindLogger = new Mock<ILogger<WindEnergy>>();
-        _mockSolarLogger = new Mock<ILogger<SolarEnergy>>();
-        _mockOtherLogger = new Mock<ILogger<OtherEnergy>>();
+        Mock<ILogger<WindEnergy>> mockWindLogger = new();
+        Mock<ILogger<SolarEnergy>> mockSolarLogger = new();
+        Mock<ILogger<OtherEnergy>> mockOtherLogger = new();
         _settings = new AppSettings.EnergySourcesSettings
         {
             WindEnergyProduction = 7.5,
             SolarEnergyProduction = 5.0,
             OtherEnergyProduction = 3.0
         };
-        _windEnergy = new WindEnergy(_mockWindLogger.Object, _settings);
-        _solarEnergy = new SolarEnergy(_mockSolarLogger.Object, _settings);
-        _otherEnergy = new OtherEnergy(_mockOtherLogger.Object, _settings);
+        _windEnergy = new WindEnergy(mockWindLogger.Object, _settings);
+        _solarEnergy = new SolarEnergy(mockSolarLogger.Object, _settings);
+        _otherEnergy = new OtherEnergy(mockOtherLogger.Object, _settings);
     }
 
     [Fact]
