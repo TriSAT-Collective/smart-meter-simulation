@@ -23,12 +23,6 @@ The `smart-meter-simulation` project simulates energy production from various so
 - Configurable settings for different energy sources.
 - Logging support for detailed simulation analysis.
 
-## Dependencies
-
-- .NET 6.0 or later
-- Microsoft.Extensions.Logging
-- Moq (for unit testing)
-
 ## Building
 
 To build the project, use the following command:
@@ -71,9 +65,3 @@ The project can be configured using the appsettings.json file. Below is an examp
 }
 ```
 
-
-## Shoutout
-
-Special thanks to the following libraries and projects that inspired this one:
-- Microsoft.Extensions.Logging
-- Moq
