@@ -14,11 +14,11 @@ public class SmartMeter
 {
     private readonly List<EnergySource> _energySources = [];
     private readonly ILogger<SmartMeter> _logger;
-    private IChannel _rabbitMQChannel;
-    private IConnection _rabbitMQConnection;
     private readonly Random _rand = new();
 
     private readonly AppSettings _settings;
+    private IChannel _rabbitMQChannel;
+    private IConnection _rabbitMQConnection;
 
     private double lifetimeConsumption;
     private double lifetimeProduction;
@@ -51,7 +51,7 @@ public class SmartMeter
         };
 
         _rabbitMQConnection = await factory.CreateConnectionAsync();
-         _rabbitMQChannel = await _rabbitMQConnection.CreateChannelAsync();
+        _rabbitMQChannel = await _rabbitMQConnection.CreateChannelAsync();
 
         DateTime startTime = _settings.Misc.SimulationStartTime ?? DateTime.Now;
         if (_settings.Misc.ContinuousSimulation)
@@ -106,6 +106,7 @@ public class SmartMeter
             // Prepare a message to publish
             var payload = new SmartMeterResultPayload
             {
+                Id = _settings.Misc.SmartMeterId,
                 Timestamp = timeStamp,
                 TotalConsumption = consumption,
                 TotalProduction = productionBySource.Values.Sum(),
