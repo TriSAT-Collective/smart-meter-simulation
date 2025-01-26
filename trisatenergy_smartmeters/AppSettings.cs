@@ -5,9 +5,9 @@ namespace trisatenergy_smartmeters;
 
 public class AppSettings
 {
-    public RabbitMqSettings RabbitMq { get; set; }
-    public MiscSettings Misc { get; set; }
-    public EnergySourcesSettings EnergySources { get; set; }
+    public RabbitMqSettings RabbitMq { get; init; }
+    public MiscSettings Misc { get; init; }
+    public EnergySourcesSettings EnergySources { get; init; }
 
     public class RabbitMqSettings
     {
