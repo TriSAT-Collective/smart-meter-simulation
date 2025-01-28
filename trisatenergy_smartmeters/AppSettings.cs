@@ -57,7 +57,7 @@ public class AppSettings
         /// <summary>
         /// Gets or sets the unique identifier for the smart meter.
         /// </summary>
-        public Guid SmartMeterId { get; set; }
+        public Guid SmartMeterId { get; set; } = Guid.NewGuid();
 
         public bool MaintenanceMode { get; set; }
         /// <summary>
